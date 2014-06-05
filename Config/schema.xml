@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="thelia" namespace="View\Model">
+    <!--
+    See propel documentation on http://propelorm.org for all information about schema file
+    -->
+    <table name="view">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="view" size="255" type="VARCHAR" />
+        <column name="source" type="CLOB" />
+        <column name="source_id" type="INTEGER" />
+        <behavior name="timestampable" />
+    </table>
+	
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>
