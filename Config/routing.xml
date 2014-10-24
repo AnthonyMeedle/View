@@ -8,5 +8,11 @@
         <default key="_controller">View\Controller\ViewController::createAction</default>
         <requirement key="source_id">\d+</requirement>
     </route>
+    
+    <route id="view.propagation" path="/admin/view/propagation/{source_id}" methods="post">
+        <default key="_controller">View\Controller\ViewController::propagationAction</default>
+        <requirement key="source_id">\d+</requirement>
+    </route>
+
 
 </routes>
