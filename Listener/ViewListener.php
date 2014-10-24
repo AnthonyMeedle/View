@@ -26,30 +26,15 @@ use View\Event\ViewEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Action\BaseAction;
 use View\Model\ViewQuery;
-//use Propel\Runtime\ActiveQuery\Criteria;
 
-/**
- * Class CommentaireListener
- * @package Commentaire\Listener
- * @author manuel raynaud <mraynaud@openstudio.fr>
- */
 class ViewListener extends BaseAction implements EventSubscriberInterface
 {
 
     public function create(ViewEvent $event)
     {
-    //    $view = new \View\Model\View();
-			//$event->getId()	
-	//	$view = ViewQuery::Create()->findPk(3);
-	//	$view->findSSID($event->getSourceId());
-//		$view = ViewQuery::Create()->filterBySource($event->getSource())->filterBySourceId($event->getSourceId());
-//	array('source'=>$event->getSource(),'source_id'=>$event->getSourceId())
-//		$view = ViewQuery::Create()->findPk(2);
-	//	$view = ViewQuery::Create()->findSSId($event->getSource(), $event->getSourceId());
-		
-		
-		$view = ViewQuery::Create()->findSSID($event->getSource(), $event->getSourceId());
-		if($view === NULL)$view = new \View\Model\View();
+
+	$view = ViewQuery::Create()->findSSID($event->getSource(), $event->getSourceId());
+	if($view === NULL)$view = new \View\Model\View();
 
 		
         $view
