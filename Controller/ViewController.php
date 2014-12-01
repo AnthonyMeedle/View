@@ -32,6 +32,11 @@ use Thelia\Model\ProductCategoryQuery;
 use Thelia\Model\CategoryQuery;
 
 
+/**
+ * Class ViewController
+ * @package View\Controller
+ * @author manuel raynaud <mraynaud@openstudio.fr>
+ */
 class ViewController extends BaseAdminController
 {
 	public function createAction($source_id)
@@ -40,6 +45,13 @@ class ViewController extends BaseAdminController
         $form = new ViewForm($this->getRequest());
         $error_message = null;
         try {
+
+           /* $product = ProductQuery::create()
+                ->findPk($product_id);
+
+            if (null === $product) {
+                throw new \Exception('product_id is not a valid product');
+            }*/
 
             $viewForm = $this->validateForm($form);
 
@@ -52,6 +64,7 @@ class ViewController extends BaseAdminController
             
            $this->dispatch('view.create', $event);
 			
+		//	var_dump($event);
 
              $this->redirect($viewForm->get('success_url')->getData());
 
@@ -79,19 +92,18 @@ class ViewController extends BaseAdminController
     public function propagationAttribution($source_id, $fichier)
     {
     	$search = CategoryQuery::create()->filterByParent($source_id);
-		if($_REQUEST['propagation'] == 4){
-    		$resultprod = ProductCategoryQuery::create()->filterByCategoryId($source_id);
-			foreach($resultprod as $rowprod){
-				$event = new ViewEvent(
-	                $fichier,
-	                'product',
-	                $rowprod->getProductId()
-	            );
-	            $this->dispatch('view.create', $event);
-			}
-		}
 		foreach($search as $category){
-
+			if($_REQUEST['propagation'] == 4){
+	    		$resultprod = ProductCategoryQuery::create()->filterByCategoryId($source_id);
+				foreach($resultprod as $rowprod){
+					$event = new ViewEvent(
+		                $fichier,
+		                'product',
+		                $rowprod->getProductId()
+		            );
+		            $this->dispatch('view.create', $event);
+				}			
+			}
 			if($_REQUEST['propagation'] == 2){
 				$event = new ViewEvent(
 	                $fichier,
@@ -99,7 +111,7 @@ class ViewController extends BaseAdminController
 	                $category->getId()
 	            );
 	            $this->dispatch('view.create', $event);
-	     	}
+			}
 			if($category->getId()){
 	            $this->propagationAttribution($category->getId(), $fichier);
 			}
@@ -110,21 +122,29 @@ class ViewController extends BaseAdminController
     	
         $form = new ViewForm($this->getRequest());
         $error_message = null;
-        try {
+    //    try {
 
+           /* $product = ProductQuery::create()
+                ->findPk($product_id);
+
+            if (null === $product) {
+                throw new \Exception('product_id is not a valid product');
+            }*/
 			$viewForm = $this->validateForm($form);
 			
 			$this->propagationAttribution($viewForm->get('source_id')->getData(), $viewForm->get('view')->getData());
+			
+		//	var_dump($event);
 
           $this->redirect($viewForm->get('success_url')->getData());
 
-
+/*
         } catch(\Exception $e) {
             $error_message = $e->getMessage();
 
 
         }
-
+*/
         $this->setupFormErrorContext(
             'erreur création view',
             $error_message,

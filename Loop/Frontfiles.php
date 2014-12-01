@@ -94,13 +94,6 @@ class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
        
 
         return $list;
-		
-		
-		
-		
-		
-		
-		
     }
 
     public function parseResults(LoopResult $loopResult)
@@ -115,10 +108,10 @@ class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
                 ->set("RELATIVE_PATH" , $template->getPath())
                 ->set("ABSOLUTE_PATH" , $template->getAbsolutePath())
             ;
-
-            $loopResult->addRow($loopResultRow);
+			$trier[$template->getName()] = $loopResultRow;
+            
         }
-
+        if(isset($trier)){ ksort($trier); foreach($trier as $result) $loopResult->addRow($result);};
         return $loopResult;
     }
 }

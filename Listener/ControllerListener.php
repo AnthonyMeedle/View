@@ -19,7 +19,12 @@ class ControllerListener implements EventSubscriberInterface
     public function controllerListener(FilterControllerEvent $event)
     {
         $request = $event->getRequest();
-	
+		
+        //var_dump($request->attributes);
+        //var_dump($request);
+	//	echo $request->query->get('view');
+	//	echo $request->query->get($request->query->get('view').'_id');
+		
 		if($request->query->get('product_id')!=0){
 			$view = ViewQuery::Create()->findSSID('product', $request->query->get('product_id'));
 			//var_dump($view);
@@ -45,7 +50,16 @@ class ControllerListener implements EventSubscriberInterface
 			if($view !== NULL && $view->getView())
 				$request->query->set('view', $view->getView());
 		}	
+//		echo $request->query->get('view');
+		//	$request->attributes->set("view", "carres_rea");
+		//	$request->attributes->set("_view", "carres_rea");
+		
+			
 
+			
+        //var_dump($request->query->get('category_id'));
+        // $request->attributes->set("_view", "category");
+       // var_dump($request->attributes); exit;
     }
 
     /**
