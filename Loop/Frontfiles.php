@@ -32,6 +32,7 @@ use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\TemplateDefinition;
+use Thelia\Core\Template\TemplateHelper;
 use Thelia\Core\Template\TheliaTemplateHelper;
 use Thelia\Model\Module;
 use Thelia\Model\ModuleQuery;
@@ -57,8 +58,12 @@ class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
 
     public function buildArray()
     {
-        /** @var TheliaTemplateHelper $templateHelper */
-        $templateHelper = $this->container->get('thelia.template_helper');
+        try {
+            /** @var TheliaTemplateHelper $templateHelper */
+            $templateHelper = $this->container->get('thelia.template_helper');
+        } catch (\Exception $ex) {
+            $templateHelper = TemplateHelper::getInstance();
+        }
 
         $frontTemplatePath = $templateHelper->getActiveFrontTemplate()->getAbsolutePath();
 
