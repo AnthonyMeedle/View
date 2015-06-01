@@ -25,4 +25,10 @@ class View extends BaseModule
         $database = new Database($con->getWrappedConnection());
         $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
     }
+
+    public function update($currentVersion, $newVersion, ConnectionInterface $con)
+    {
+        $database = new Database($con->getWrappedConnection());
+        $database->insertSql(null, array(__DIR__ . '/Config/update.sql'));
+    }
 }

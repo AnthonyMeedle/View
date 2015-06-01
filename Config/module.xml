@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module>
+<module xmlns="http://thelia.net/schema/dic/module"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_1.xsd">
     <fullnamespace>View\View</fullnamespace>
     <descriptive locale="en_US">
-        <title>View</title>
+        <title>Assign a specific view for any category, product, folder or content</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>View</title>
+        <title>Utilisez une vue spécifique pour chaque catégorie, produit, dossier ou contenu</title>
     </descriptive>
-    <version>1.0</version>
+    <languages>
+        <language>en_US</language>
+        <language>fr_FR</language>
+    </languages>
+    <version>2.0.0</version>
     <author>
-        <name>Anthony Chevrier</name>
-        <email>anthony@meedle.fr</email>
+        <name>Anthony Chevrier / Franck Allimant</name>
+        <email>anthony@meedle.fr / thelia@cqfdev.fr</email>
     </author>
     <type>classic</type>
-    <thelia>2.0.0</thelia>
-    <stability>other</stability>
+    <thelia>2.1.0</thelia>
+    <stability>prod</stability>
 </module>

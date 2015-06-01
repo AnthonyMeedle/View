@@ -6,12 +6,12 @@ $successUrl : the form success url
 <div class="general-block-decorator">
     <div class="row">
         <div class="col-md-12">
-            <p class="title title-without-tabs">{intl l="Vue à utiliser pour %label" label=$objectLabel}</p>{form name="view.create"}
+            <p class="title title-without-tabs">{intl d="view.bo.default" l="Vue à utiliser pour %label" label=$objectLabel}</p>{form name="view.create"}
 
             {loop type="frontview" name="front_view" source=$sourceType source_id=$sourceId}
                 {loop type="view" name="view" id=$VIEW_ID}
                     {loop type=$SOURCE name="obj_title" id=$SOURCE_ID}
-                        {$frontView = {intl l='<strong>%view</strong> (définie dans %title)' view=$FRONT_VIEW title=$TITLE}}
+                        {$frontView = {intl d="view.bo.default" l='<strong>%view</strong> (définie dans %title)' view=$FRONT_VIEW title=$TITLE}}
                     {/loop}
                 {/loop}
             {/loop}
@@ -115,7 +115,7 @@ $successUrl : the form success url
                 {/form_field}
 
                 <div class="form-group">
-                    <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success">
+                    <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-success pull-right">
                         {intl d="view.bo.default" l='Enregistrer'} <span class="glyphicon glyphicon-ok"></span>
                     </button>
                 </div>
