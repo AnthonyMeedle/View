@@ -1,4 +1,10 @@
 <?php
+
 return array(
-    // 'an english string' => 'The displayed english string',
+    'Children view name' => 'Children view name',
+    'Object with subtree' => 'Object with subtree',
+    'Source object ID' => 'Source object ID',
+    'Source type' => 'Source type',
+    'Sub-tree view name' => 'Sub-tree view name',
+    'View name' => 'View name',
 );
