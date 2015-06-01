@@ -1,0 +1,126 @@
+{*
+$sourceType : la source de la vue: folder, product, cateogry, product
+$sourceId : identifiant de la source de la vue
+$successUrl : the form success url
+*}
+<div class="general-block-decorator">
+    <div class="row">
+        <div class="col-md-12">
+            <p class="title title-without-tabs">{intl l="Vue à utiliser pour %label" label=$objectLabel}</p>{form name="view.create"}
+
+            {loop type="frontview" name="front_view" source=$sourceType source_id=$sourceId}
+                {loop type="view" name="view" id=$VIEW_ID}
+                    {loop type=$SOURCE name="obj_title" id=$SOURCE_ID}
+                        {$frontView = {intl l='<strong>%view</strong> (définie dans %title)' view=$FRONT_VIEW title=$TITLE}}
+                    {/loop}
+                {/loop}
+            {/loop}
+
+            {if empty($frontView)}
+                {$frontView = {intl d="view.bo.default" l="la vue par défaut"}}
+            {/if}
+
+            <p>{intl d="view.bo.default" l="La vue actuellement utilisée par %label est %view." label=$objectLabel view=$frontView}</p>
+
+            <form action="{url path="/admin/view/add/$sourceId"}" method="POST" {form_enctype form=$form}>
+                {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+
+                {* Pour gérer les erreurs *}
+                <input type="hidden" name="source_type" value="{$sourceType}">
+
+                {form_hidden_fields form=$form}
+
+                {form_field form=$form field="success_url"}
+                    <input type="hidden" name="{$name}" value="{$successUrl}">
+                {/form_field}
+
+                {form_field form=$form field="view"}
+                    <div class="form-group {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}" class="control-label">
+                            {intl d="view.bo.default" l="Choisissez une vue :"}
+                        </label>
+
+                        {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
+                            {$viewSelected = $VIEW}
+                        {/loop}
+
+                        <select id="{$label_attr.for}" name="{$name}" class="submit-on-change form-control">
+                            <option value="">{intl d="view.bo.default" l='Utiliser la vue par défaut' view=$sourceType}</option>
+                            {loop type="frontfiles" name="translate-fo-templates"}
+                                <option value="{$NAME}"{if $NAME == $viewSelected} selected="selected"{/if}>{$FILE}</option>
+                            {/loop}
+                        </select>
+                    </div>
+                {/form_field}
+
+                {form_field form=$form field="has_subtree"}
+                    <input type="hidden" name="{$name}" value="{$hasSubTree}">
+                {/form_field}
+
+                {if $hasSubTree}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="title title-without-tabs">{intl d="view.bo.default" l="Vue à utiliser par les %label" label=$subTreeObjectLabel}</p>
+
+                            {form_field form=$form field="subtree_view"}
+                                <div class="form-group {if $error}has-error{/if}">
+                                    <label for="{$label_attr.for}" class="control-label">
+                                        {intl d="view.bo.default" l="Choisissez une vue :"}
+                                    </label>
+
+                                    {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
+                                    {$viewSelected = $SUBTREE_VIEW}
+                                    {/loop}
+
+                                    <select id="{$label_attr.for}" name="{$name}" class="submit-on-change form-control">
+                                        <option value="">{intl d="view.bo.default" l='Utiliser la vue par défaut' view=$sourceType}</option>
+                                        {loop type="frontfiles" name="translate-fo-templates"}
+                                            <option value="{$NAME}"{if $NAME == $viewSelected} selected="selected"{/if}>{$FILE}</option>
+                                        {/loop}
+                                    </select>
+                                </div>
+                            {/form_field}
+                        </div>
+
+                        <div class="col-md-6">
+                            <p class="title title-without-tabs">{intl d="view.bo.default" l="Vue à utiliser par les %label" label=$childrenObjectLabel}</p>
+
+                            {form_field form=$form field="children_view"}
+                                <div class="form-group {if $error}has-error{/if}">
+                                    <label for="{$label_attr.for}" class="control-label">
+                                        {intl d="view.bo.default" l="Choisissez une vue :"}
+                                    </label>
+
+                                    {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
+                                    {$viewSelected = $CHILDREN_VIEW}
+                                    {/loop}
+
+                                    <select id="{$label_attr.for}" name="{$name}" class="submit-on-change form-control">
+                                        <option value="">{intl d="view.bo.default" l='Utiliser la vue par défaut' view=$childrenSourceType}</option>
+                                        {loop type="frontfiles" name="translate-fo-templates"}
+                                            <option value="{$NAME}"{if $NAME == $viewSelected} selected="selected"{/if}>{$FILE}</option>
+                                        {/loop}
+                                    </select>
+                                </div>
+                            {/form_field}
+                        </div>
+                    </div>
+                {/if}
+
+                {form_field form=$form field="source"}
+                    <input type="hidden" name="{$name}" value="{$sourceType}">
+                {/form_field}
+                {form_field form=$form field="source_id"}
+                    <input type="hidden" name="{$name}" value="{$sourceId}">
+                {/form_field}
+
+                <div class="form-group">
+                    <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success">
+                        {intl d="view.bo.default" l='Enregistrer'} <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </div>
+            </form>
+        {/form}
+        </div>
+    </div>
+</div>

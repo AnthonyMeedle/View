@@ -8,6 +8,8 @@
         <column name="view" size="255" type="VARCHAR" />
         <column name="source" type="CLOB" />
         <column name="source_id" type="INTEGER" />
+        <column name="subtree_view" size="255" type="VARCHAR" default="" />
+        <column name="children_view" size="255" type="VARCHAR" default="" />
         <behavior name="timestampable" />
     </table>
 	

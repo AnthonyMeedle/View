@@ -11,13 +11,16 @@
 /*************************************************************************************/
 
 namespace View;
+
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Module\BaseModule;
 
 class View extends BaseModule
 {
-	public function postActivation(ConnectionInterface $con = null)
+    const DOMAIN = 'view';
+
+    public function postActivation(ConnectionInterface $con = null)
     {
         $database = new Database($con->getWrappedConnection());
         $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));

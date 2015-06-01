@@ -22,6 +22,8 @@ use View\Model\Map\ViewTableMap;
  * @method     ChildViewQuery orderByView($order = Criteria::ASC) Order by the view column
  * @method     ChildViewQuery orderBySource($order = Criteria::ASC) Order by the source column
  * @method     ChildViewQuery orderBySourceId($order = Criteria::ASC) Order by the source_id column
+ * @method     ChildViewQuery orderBySubtreeView($order = Criteria::ASC) Order by the subtree_view column
+ * @method     ChildViewQuery orderByChildrenView($order = Criteria::ASC) Order by the children_view column
  * @method     ChildViewQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildViewQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -29,6 +31,8 @@ use View\Model\Map\ViewTableMap;
  * @method     ChildViewQuery groupByView() Group by the view column
  * @method     ChildViewQuery groupBySource() Group by the source column
  * @method     ChildViewQuery groupBySourceId() Group by the source_id column
+ * @method     ChildViewQuery groupBySubtreeView() Group by the subtree_view column
+ * @method     ChildViewQuery groupByChildrenView() Group by the children_view column
  * @method     ChildViewQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildViewQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -43,6 +47,8 @@ use View\Model\Map\ViewTableMap;
  * @method     ChildView findOneByView(string $view) Return the first ChildView filtered by the view column
  * @method     ChildView findOneBySource(string $source) Return the first ChildView filtered by the source column
  * @method     ChildView findOneBySourceId(int $source_id) Return the first ChildView filtered by the source_id column
+ * @method     ChildView findOneBySubtreeView(string $subtree_view) Return the first ChildView filtered by the subtree_view column
+ * @method     ChildView findOneByChildrenView(string $children_view) Return the first ChildView filtered by the children_view column
  * @method     ChildView findOneByCreatedAt(string $created_at) Return the first ChildView filtered by the created_at column
  * @method     ChildView findOneByUpdatedAt(string $updated_at) Return the first ChildView filtered by the updated_at column
  *
@@ -50,6 +56,8 @@ use View\Model\Map\ViewTableMap;
  * @method     array findByView(string $view) Return ChildView objects filtered by the view column
  * @method     array findBySource(string $source) Return ChildView objects filtered by the source column
  * @method     array findBySourceId(int $source_id) Return ChildView objects filtered by the source_id column
+ * @method     array findBySubtreeView(string $subtree_view) Return ChildView objects filtered by the subtree_view column
+ * @method     array findByChildrenView(string $children_view) Return ChildView objects filtered by the children_view column
  * @method     array findByCreatedAt(string $created_at) Return ChildView objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return ChildView objects filtered by the updated_at column
  *
@@ -140,7 +148,7 @@ abstract class ViewQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, VIEW, SOURCE, SOURCE_ID, CREATED_AT, UPDATED_AT FROM view WHERE ID = :p0';
+        $sql = 'SELECT ID, VIEW, SOURCE, SOURCE_ID, SUBTREE_VIEW, CHILDREN_VIEW, CREATED_AT, UPDATED_AT FROM view WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -367,6 +375,64 @@ abstract class ViewQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ViewTableMap::SOURCE_ID, $sourceId, $comparison);
+    }
+
+    /**
+     * Filter the query on the subtree_view column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySubtreeView('fooValue');   // WHERE subtree_view = 'fooValue'
+     * $query->filterBySubtreeView('%fooValue%'); // WHERE subtree_view LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $subtreeView The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildViewQuery The current query, for fluid interface
+     */
+    public function filterBySubtreeView($subtreeView = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($subtreeView)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $subtreeView)) {
+                $subtreeView = str_replace('*', '%', $subtreeView);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ViewTableMap::SUBTREE_VIEW, $subtreeView, $comparison);
+    }
+
+    /**
+     * Filter the query on the children_view column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByChildrenView('fooValue');   // WHERE children_view = 'fooValue'
+     * $query->filterByChildrenView('%fooValue%'); // WHERE children_view LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $childrenView The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildViewQuery The current query, for fluid interface
+     */
+    public function filterByChildrenView($childrenView = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($childrenView)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $childrenView)) {
+                $childrenView = str_replace('*', '%', $childrenView);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ViewTableMap::CHILDREN_VIEW, $childrenView, $comparison);
     }
 
     /**

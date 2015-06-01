@@ -21,64 +21,87 @@
 /*                                                                                   */
 /*************************************************************************************/
 
-namespace View\Controller;
+namespace View\Event;
 
-use Thelia\Controller\Admin\BaseAdminController;
-use Thelia\Log\Tlog;
-use View\Event\ViewEvent;
-use View\Form\ViewForm;
+use Thelia\Core\Event\ActionEvent;
+use Thelia\Core\HttpFoundation\Request;
+use View\Model\View;
 
 /**
- * Class ViewController
- * @package View\Controller
+ * Class FindViewEvent
+ * @package View\Event
  */
-class ViewController extends BaseAdminController
+class FindViewEvent extends ActionEvent
 {
-    public function createAction($source_id)
+    /** @var  int */
+    protected $objectId;
+    /** @var  int */
+    protected $objectType;
+    /** @var  string */
+    protected $view;
+    /** @var  View */
+    protected $viewObject;
+
+    public function __construct($objectId, $objectType)
     {
-        $form = new ViewForm($this->getRequest());
+        $this->objectId = $objectId;
+        $this->objectType = $objectType;
+    }
 
-        try {
-            $viewForm = $this->validateForm($form);
+    public function hasView()
+    {
+        return ! empty($this->view);
+    }
 
-            $data = $viewForm->getData();
+    /**
+     * @return mixed
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
 
+    /**
+     * @param mixed $view
+     * @return $this
+     */
+    public function setView($view)
+    {
+        $this->view = $view;
+        return $this;
+    }
 
-            $event = new ViewEvent(
-                $data['view'],
-                $data['source'],
-                $data['source_id']
-            );
+    /**
+     * @return int
+     */
+    public function getObjectId()
+    {
+        return $this->objectId;
+    }
 
-            if ($data['has_subtree'] != 0) {
-                $event
-                    ->setChildrenView($data['children_view'])
-                    ->setSubtreeView($data['subtree_view']);
-            }
+    /**
+     * @return int
+     */
+    public function getObjectType()
+    {
+        return $this->objectType;
+    }
 
-            $this->dispatch('view.create', $event);
+    /**
+     * @return View
+     */
+    public function getViewObject()
+    {
+        return $this->viewObject;
+    }
 
-            return $this->generateSuccessRedirect($form);
-        } catch (\Exception $ex) {
-            $error_message = $ex->getMessage();
-
-            Tlog::getInstance()->error("Failed to validate View form: $error_message");
-        }
-
-        $this->setupFormErrorContext(
-            'Failed to process View form data',
-            $error_message,
-            $form
-        );
-
-        $sourceType = $this->getRequest()->get('source_type');
-
-        return $this->render(
-            $sourceType . '-edit',
-            [
-                $sourceType . '_id' => $source_id,
-                'current_tab' => 'modules'
-            ]
-        );
+    /**
+     * @param View $viewObject
+     * @return $this
+     */
+    public function setViewObject($viewObject)
+    {
+        $this->viewObject = $viewObject;
+        return $this;
     }
 }

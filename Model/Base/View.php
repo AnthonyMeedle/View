@@ -79,6 +79,20 @@ abstract class View implements ActiveRecordInterface
     protected $source_id;
 
     /**
+     * The value for the subtree_view field.
+     * Note: this column has a database default value of: ''
+     * @var        string
+     */
+    protected $subtree_view;
+
+    /**
+     * The value for the children_view field.
+     * Note: this column has a database default value of: ''
+     * @var        string
+     */
+    protected $children_view;
+
+    /**
      * The value for the created_at field.
      * @var        string
      */
@@ -99,10 +113,24 @@ abstract class View implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->subtree_view = '';
+        $this->children_view = '';
+    }
+
+    /**
      * Initializes internal state of View\Model\Base\View object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -401,6 +429,28 @@ abstract class View implements ActiveRecordInterface
     }
 
     /**
+     * Get the [subtree_view] column value.
+     *
+     * @return   string
+     */
+    public function getSubtreeView()
+    {
+
+        return $this->subtree_view;
+    }
+
+    /**
+     * Get the [children_view] column value.
+     *
+     * @return   string
+     */
+    public function getChildrenView()
+    {
+
+        return $this->children_view;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -525,6 +575,48 @@ abstract class View implements ActiveRecordInterface
     } // setSourceId()
 
     /**
+     * Set the value of [subtree_view] column.
+     *
+     * @param      string $v new value
+     * @return   \View\Model\View The current object (for fluent API support)
+     */
+    public function setSubtreeView($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->subtree_view !== $v) {
+            $this->subtree_view = $v;
+            $this->modifiedColumns[ViewTableMap::SUBTREE_VIEW] = true;
+        }
+
+
+        return $this;
+    } // setSubtreeView()
+
+    /**
+     * Set the value of [children_view] column.
+     *
+     * @param      string $v new value
+     * @return   \View\Model\View The current object (for fluent API support)
+     */
+    public function setChildrenView($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->children_view !== $v) {
+            $this->children_view = $v;
+            $this->modifiedColumns[ViewTableMap::CHILDREN_VIEW] = true;
+        }
+
+
+        return $this;
+    } // setChildrenView()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
@@ -576,6 +668,14 @@ abstract class View implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->subtree_view !== '') {
+                return false;
+            }
+
+            if ($this->children_view !== '') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -615,13 +715,19 @@ abstract class View implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ViewTableMap::translateFieldName('SourceId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->source_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ViewTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ViewTableMap::translateFieldName('SubtreeView', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->subtree_view = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ViewTableMap::translateFieldName('ChildrenView', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->children_view = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ViewTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ViewTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ViewTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -634,7 +740,7 @@ abstract class View implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = ViewTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = ViewTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \View\Model\View object", 0, $e);
@@ -866,6 +972,12 @@ abstract class View implements ActiveRecordInterface
         if ($this->isColumnModified(ViewTableMap::SOURCE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'SOURCE_ID';
         }
+        if ($this->isColumnModified(ViewTableMap::SUBTREE_VIEW)) {
+            $modifiedColumns[':p' . $index++]  = 'SUBTREE_VIEW';
+        }
+        if ($this->isColumnModified(ViewTableMap::CHILDREN_VIEW)) {
+            $modifiedColumns[':p' . $index++]  = 'CHILDREN_VIEW';
+        }
         if ($this->isColumnModified(ViewTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
         }
@@ -894,6 +1006,12 @@ abstract class View implements ActiveRecordInterface
                         break;
                     case 'SOURCE_ID':
                         $stmt->bindValue($identifier, $this->source_id, PDO::PARAM_INT);
+                        break;
+                    case 'SUBTREE_VIEW':
+                        $stmt->bindValue($identifier, $this->subtree_view, PDO::PARAM_STR);
+                        break;
+                    case 'CHILDREN_VIEW':
+                        $stmt->bindValue($identifier, $this->children_view, PDO::PARAM_STR);
                         break;
                     case 'CREATED_AT':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -976,9 +1094,15 @@ abstract class View implements ActiveRecordInterface
                 return $this->getSourceId();
                 break;
             case 4:
-                return $this->getCreatedAt();
+                return $this->getSubtreeView();
                 break;
             case 5:
+                return $this->getChildrenView();
+                break;
+            case 6:
+                return $this->getCreatedAt();
+                break;
+            case 7:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1013,8 +1137,10 @@ abstract class View implements ActiveRecordInterface
             $keys[1] => $this->getView(),
             $keys[2] => $this->getSource(),
             $keys[3] => $this->getSourceId(),
-            $keys[4] => $this->getCreatedAt(),
-            $keys[5] => $this->getUpdatedAt(),
+            $keys[4] => $this->getSubtreeView(),
+            $keys[5] => $this->getChildrenView(),
+            $keys[6] => $this->getCreatedAt(),
+            $keys[7] => $this->getUpdatedAt(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1067,9 +1193,15 @@ abstract class View implements ActiveRecordInterface
                 $this->setSourceId($value);
                 break;
             case 4:
-                $this->setCreatedAt($value);
+                $this->setSubtreeView($value);
                 break;
             case 5:
+                $this->setChildrenView($value);
+                break;
+            case 6:
+                $this->setCreatedAt($value);
+                break;
+            case 7:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1100,8 +1232,10 @@ abstract class View implements ActiveRecordInterface
         if (array_key_exists($keys[1], $arr)) $this->setView($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setSource($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setSourceId($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
+        if (array_key_exists($keys[4], $arr)) $this->setSubtreeView($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setChildrenView($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setCreatedAt($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
     }
 
     /**
@@ -1117,6 +1251,8 @@ abstract class View implements ActiveRecordInterface
         if ($this->isColumnModified(ViewTableMap::VIEW)) $criteria->add(ViewTableMap::VIEW, $this->view);
         if ($this->isColumnModified(ViewTableMap::SOURCE)) $criteria->add(ViewTableMap::SOURCE, $this->source);
         if ($this->isColumnModified(ViewTableMap::SOURCE_ID)) $criteria->add(ViewTableMap::SOURCE_ID, $this->source_id);
+        if ($this->isColumnModified(ViewTableMap::SUBTREE_VIEW)) $criteria->add(ViewTableMap::SUBTREE_VIEW, $this->subtree_view);
+        if ($this->isColumnModified(ViewTableMap::CHILDREN_VIEW)) $criteria->add(ViewTableMap::CHILDREN_VIEW, $this->children_view);
         if ($this->isColumnModified(ViewTableMap::CREATED_AT)) $criteria->add(ViewTableMap::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(ViewTableMap::UPDATED_AT)) $criteria->add(ViewTableMap::UPDATED_AT, $this->updated_at);
 
@@ -1185,6 +1321,8 @@ abstract class View implements ActiveRecordInterface
         $copyObj->setView($this->getView());
         $copyObj->setSource($this->getSource());
         $copyObj->setSourceId($this->getSourceId());
+        $copyObj->setSubtreeView($this->getSubtreeView());
+        $copyObj->setChildrenView($this->getChildrenView());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1224,10 +1362,13 @@ abstract class View implements ActiveRecordInterface
         $this->view = null;
         $this->source = null;
         $this->source_id = null;
+        $this->subtree_view = null;
+        $this->children_view = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);

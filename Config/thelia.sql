@@ -7,12 +7,16 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- view
 -- ---------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `view`
+DROP TABLE IF EXISTS `view`;
+
+CREATE TABLE `view`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `view` VARCHAR(255),
     `source` LONGTEXT,
     `source_id` INTEGER,
+    `subtree_view` VARCHAR(255) DEFAULT '',
+    `children_view` VARCHAR(255) DEFAULT '',
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`)

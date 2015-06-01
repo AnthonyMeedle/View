@@ -23,68 +23,55 @@
 
 namespace View\Loop;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Core\Template\TemplateDefinition;
-use Thelia\Core\Template\TheliaTemplateHelper;
-use Thelia\Model\Module;
-use Thelia\Model\ModuleQuery;
-use Thelia\Type;
-
+use View\Event\FindViewEvent;
 
 /**
- * Class Commentaire
- * @package Commentaire\Loop
- * @author manuel raynaud <mraynaud@openstudio.fr>
+ * Class FrontView
+ * @package View\Loop
  */
-class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
+class FrontView extends BaseLoop implements ArraySearchLoopInterface
 {
-    /**
-     * @return ArgumentCollection
-     */
     protected function getArgDefinitions()
     {
         return new ArgumentCollection(
-            Argument::createAnyTypeArgument('templates-active')
+            Argument::createAnyTypeArgument('source'),
+            Argument::createIntTypeArgument('source_id')
         );
     }
 
     public function buildArray()
     {
-        /** @var TheliaTemplateHelper $templateHelper */
-        $templateHelper = $this->container->get('thelia.template_helper');
+        $findEvent = new FindViewEvent($this->getSourceId(), $this->getSource());
 
-        $frontTemplatePath = $templateHelper->getActiveFrontTemplate()->getAbsolutePath();
+        $this->dispatcher->dispatch('view.find', $findEvent);
 
-        $list = [];
-
-        $finder = Finder::create()->files()->in($frontTemplatePath)->ignoreDotFiles(true)->sortByName()->name("*.html");
-
-        foreach ($finder as $file) {
-            $list[] = $file;
-        }
-
-        return $list;
+        return $findEvent->hasView() ? [ [
+            'name' => $findEvent->getView(),
+            'id'   => $findEvent->getViewObject()->getId()
+        ] ] : [];
     }
 
+
+    /**
+     * @param LoopResult $loopResult
+     *
+     * @return LoopResult
+     */
     public function parseResults(LoopResult $loopResult)
     {
-        /** @var SplFileInfo $template */
-        foreach ($loopResult->getResultDataCollection() as $template) {
-            $loopResultRow = new LoopResultRow($template);
+        foreach ($loopResult->getResultDataCollection() as $view) {
+            $loopResultRow = new LoopResultRow($view);
 
             $loopResultRow
-                ->set("NAME", str_replace('.html', '', $template->getFilename()))
-                ->set("FILE", $template->getFilename())
-                ->set("RELATIVE_PATH", $template->getRelativePath())
-                ->set("ABSOLUTE_PATH", $template->getPath())
-            ;
+                ->set('FRONT_VIEW', $view['name'])
+                ->set('VIEW_ID', $view['id'])
+                ;
 
             $loopResult->addRow($loopResultRow);
         }

@@ -23,9 +23,11 @@
 
 namespace View\Form;
 
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 use Thelia\Core\Translation\Translator;
+use View\View;
 
 
 /**
@@ -60,25 +62,51 @@ class ViewForm extends BaseForm
     {
         $this->formBuilder
             ->add('view', 'text', array(
-                'constraints' => array(
-                    new NotBlank()
-                ),
-                'label' => Translator::getInstance()->trans('view'),
+                'label' => Translator::getInstance()->trans('View name', [], View::DOMAIN),
                 'label_attr' => array(
                     'for' => 'view_view'
                 )
             ))
+            ->add('has_subtree', 'integer', array(
+                'constraints' => array(
+                    new NotBlank()
+                ),
+                'label' => Translator::getInstance()->trans('Object with subtree', [], View::DOMAIN),
+                'label_attr' => array(
+                    'for' => 'view_has_subtree'
+                )
+            ))
+
+            ->add('subtree_view', 'text', array(
+                'required' => false,
+                'label' => Translator::getInstance()->trans('Sub-tree view name', [], View::DOMAIN),
+                'label_attr' => array(
+                    'for' => 'view_subtree_view'
+                )
+            ))
+            ->add('children_view', 'text', array(
+                'required' => false,
+                'label' => Translator::getInstance()->trans('Children view name', [], View::DOMAIN),
+                'label_attr' => array(
+                    'for' => 'view_children_view'
+                )
+            ))
+
             ->add('source', 'text', array(
                 'constraints' => array(
                     new NotBlank()
                 ),
-                'label' => Translator::getInstance()->trans('source'),
+                'label' => Translator::getInstance()->trans('Source type', [], View::DOMAIN),
                 'label_attr' => array(
                     'for' => 'view_source'
                 )
             ))
             ->add('source_id', 'integer', array(
-                'label' => Translator::getInstance()->trans('source id'),
+                'constraints' => array(
+                    new NotBlank(),
+                    new GreaterThan([ 'value' => 0])
+                ),
+                'label' => Translator::getInstance()->trans('Source object ID', [], View::DOMAIN),
                 'label_attr' => array(
                     'for' => 'view_source_id'
                 )

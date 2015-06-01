@@ -22,7 +22,7 @@
 /*************************************************************************************/
 
 namespace View\Loop;
-use View\Model\ViewQuery;
+
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
@@ -30,8 +30,7 @@ use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Element\PropelSearchLoopInterface;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Type\BooleanOrBothType;
-
+use View\Model\ViewQuery;
 
 /**
  * Class Commentaire
@@ -93,26 +92,21 @@ class View extends BaseLoop implements PropelSearchLoopInterface
     {
         $search = ViewQuery::create();
 
-        $id = $this->getId();
-        if ($id) {
+        if (null !== $id = $this->getId()) {
             $search->filterById($id, Criteria::IN);
         }
-        
-        $view = $this->getView();
-        if($view) {
+
+        if (null !== $view = $this->getView()) {
             $search->filterByView($view, Criteria::IN);
         }
         
-        $source = $this->getSource();
-        if($source) {
+        if (null !== $source = $this->getSource()) {
             $search->filterBySource($source, Criteria::IN);
         }
 
-        $source_id = $this->getSourceId();
-        if($source_id) {
+        if (null !== $source_id = $this->getSourceId()) {
             $search->filterBySourceId($source_id, Criteria::IN);
         }
-        
 
         return $search;
     }
@@ -125,16 +119,18 @@ class View extends BaseLoop implements PropelSearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult)
     {
+        /** @var \View\Model\View $view */
         foreach ($loopResult->getResultDataCollection() as $view) {
             $loopResultRow = new LoopResultRow($view);
 
             $loopResultRow
                 ->set('ID', $view->getId())
-                ->set('VIEW', $view->getView())
                 ->set('SOURCE_ID', $view->getSourceId())
                 ->set('SOURCE', $view->getSource())
-
-            ;
+                ->set('VIEW', $view->getView())
+                ->set('SUBTREE_VIEW', $view->getSubtreeView())
+                ->set('CHILDREN_VIEW', $view->getChildrenView())
+                ;
 
             $loopResult->addRow($loopResultRow);
         }
