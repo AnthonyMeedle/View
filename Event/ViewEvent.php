@@ -22,51 +22,61 @@
 /*************************************************************************************/
 
 namespace View\Event;
-use Thelia\Core\Event\ActionEvent;
 
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class ViewEvent
  * @package View\Event
- * @author manuel raynaud <mraynaud@openstudio.fr>
  */
 class ViewEvent extends ActionEvent
 {
-	
+
+    /** @var  string */
     protected $view;
-    
+    /** @var  string */
     protected $source;
-
+    /** @var  int */
     protected $source_id;
+    /** @var  string */
+    protected $childrenView = '';
+    /** @var  string */
+    protected $subtreeView = '';
 
-    function __construct($view, $source, $source_id)
+    public function __construct($view, $source, $source_id)
     {
         $this->view = $view;
         $this->source = $source;
         $this->source_id = $source_id;
     }
 
-    /**
-     * @param mixed $view
-     */
-     
-     
-    public function setView($view)
+    public function hasDefinedViews()
     {
-        $this->view = $view;
+        return ! (empty($this->view) && empty($this->childrenView) && empty($this->subtreeView));
     }
 
     /**
-     * @return mixed
+     * @param string $view the view name
+     * @return $this
      */
-    public function getView()
+    public function setViewName($view)
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewName()
     {
         return $this->view;
     }
 
 
     /**
-     * @param mixed $description
+     * @param string $source the source object, one of product, category, content, folder
+     * @return $this
      */
     public function setSource($source)
     {
@@ -76,7 +86,7 @@ class ViewEvent extends ActionEvent
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSource()
     {
@@ -84,7 +94,8 @@ class ViewEvent extends ActionEvent
     }
 
     /**
-     * @param mixed $source_id
+     * @param int $source_id
+     * @return $this
      */
     public function setSourceId($source_id)
     {
@@ -94,12 +105,46 @@ class ViewEvent extends ActionEvent
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getSourceId()
     {
         return $this->source_id;
     }
 
+    /**
+     * @return string
+     */
+    public function getChildrenView()
+    {
+        return $this->childrenView;
+    }
 
-} 
+    /**
+     * @param string $childrenView
+     * @return $this
+     */
+    public function setChildrenView($childrenView)
+    {
+        $this->childrenView = $childrenView;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubtreeView()
+    {
+        return $this->subtreeView;
+    }
+
+    /**
+     * @param string $subtreeView
+     * @return $this
+     */
+    public function setSubtreeView($subtreeView)
+    {
+        $this->subtreeView = $subtreeView;
+        return $this;
+    }
+}

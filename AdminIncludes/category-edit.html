@@ -1,90 +1,12 @@
-<div class="general-block-decorator">
-	<div class="row">
-   	 	<div class="col-md-12">			      
-			<p class="title title-without-tabs">{intl l="Chosir le fichier template utilisé pour cette catégorie"}</p>
-			{form name="view.create"}
-			    <form action="{url path="/admin/view/add/$category_id"}" method="POST" {form_enctype form=$form}>
-			        {form_hidden_fields form=$form}
-			        {form_field form=$form field="success_url"}
-			            <input type="hidden" name="{$name}" value="{url path="/admin/categories/update?category_id=$category_id&current_tab=modules"}">
-			        {/form_field}
-			        {form_field form=$form field="view"}
-			            <div class="col-md-10 form-group {if $error}has-error{/if}">
-			                <label for="{$label_attr.for}" class="control-label">
-			                    {$label} :
-			                </label>
-			                <select id="{$label_attr.for}" required="required" name="{$name}" class="submit-on-change form-control">
-								{loop type="view" name="viewselected" source="category" source_id="{$category_id}"}
-								   <option value="{$VIEW}">{$VIEW}</option>
-								{/loop}
-								{elseloop rel="viewselected"}
-								   <option value="{$value}">{$value}</option>
-								{/elseloop}
-								{loop type="frontfiles" name="translate-fo-template" template-active="{config key="active-front-template"}"}
-									<option value="{$NAME}" >{$NAME}</option>
-								{/loop}
-							</select>
-			            </div>
-			        {/form_field}
-			        {form_field form=$form field="source"}
-			            <input type="hidden" name="{$name}" value="category">
-			        {/form_field}
-			        {form_field form=$form field="source_id"}
-			            <input type="hidden" name="{$name}" value="{$category_id}">
-			        {/form_field}
-			        <div class="form-group  col-md-2">
-			        	<label>&nbsp;</label>
-			            <button type="submit" name="save_mode" value="stay" class="submit-on-change form-control form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save'}">{intl l='Save'} <span class="glyphicon glyphicon-ok"></span></button>
-			        </div>
-			    </form>
-			{/form}
-			
-				<p class="title title-without-tabs">{intl l="Chosir le fichier template utilisé pour les sous catégorie ou les produits enfants."}</p>
-			{form name="view.create"}
-			    <form action="{url path="/admin/view/propagation/$category_id"}" method="POST" {form_enctype form=$form}>
-			        {form_hidden_fields form=$form}
-			
-			        {form_field form=$form field="success_url"}
-			            <input type="hidden" name="{$name}" value="{url path="/admin/categories/update?category_id=$category_id&current_tab=modules"}">
-			        {/form_field}
-			        {form_field form=$form field="view"}
-			
-				         <div class="col-md-4 form-group {if $error}has-error{/if}">
-			                <label for="propagation" class="control-label">
-			                    Attribuer un fichier template : 
-			                </label>
-			                <select id="propagation" required="required" name="propagation" class="submit-on-change form-control">
-							<!--	<option value="1">aux sous catégories de cette catégorie</option>	-->
-								<option value="2">aux sous catégories</option>
-							<!--	<option value="3">aux produits de cette catégorie</option> -->
-								<option value="4">aux produits</option>
-			               </select>
-			            </div>
-			            <div class="col-md-4 form-group {if $error}has-error{/if}">
-			                <label for="{$label_attr.for}" class="control-label">
-			                    {$label} :
-			                </label>
-			                <select id="{$label_attr.for}" required="required" name="{$name}" class="submit-on-change form-control">
-			                	<option value="">Choix du fichier</option>
-			                   {loop type="frontfiles" name="translate-fo-template" template-active="{config key="active-front-template"}"}
-			                       <option value="{$NAME}" >{$NAME}</option>
-			                   {/loop}
-			               </select>
-			            </div>
-			
-			        {/form_field}
-			        {form_field form=$form field="source"}
-			            <input type="hidden" name="{$name}" value="category">
-			        {/form_field}
-			        {form_field form=$form field="source_id"}
-			            <input type="hidden" name="{$name}" value="{$category_id}">
-			        {/form_field}
-			        <div class="form-group col-md-2">
-			        	<label>&nbsp;</label>
-			            <button type="submit" name="save_mode" value="stay" class="submit-on-change form-control form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save'}">{intl l='Save'} <span class="glyphicon glyphicon-ok"></span></button>
-			        </div>
-			    </form>
-			{/form}
-		</div>
-	</div>
-</div>
+{include
+    file="view-includes/generic-view-selector.html"
+    sourceType = 'category'
+    sourceId = $category_id
+    successUrl = {url path="/admin/categories/update?category_id=$category_id&current_tab=modules"}
+    hasSubTree = 1
+    objectLabel = {intl d='view.ai' l='cette catégorie'}
+    subTreeObjectLabel = {intl d='view.ai' l='sous-catégories'}
+
+    childrenObjectLabel = {intl d='view.ai' l='produits'}
+    childrenSourceType = 'product'
+}

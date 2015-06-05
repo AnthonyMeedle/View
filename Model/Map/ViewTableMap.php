@@ -58,7 +58,7 @@ class ViewTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class ViewTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the ID field
@@ -89,6 +89,16 @@ class ViewTableMap extends TableMap
      * the column name for the SOURCE_ID field
      */
     const SOURCE_ID = 'view.SOURCE_ID';
+
+    /**
+     * the column name for the SUBTREE_VIEW field
+     */
+    const SUBTREE_VIEW = 'view.SUBTREE_VIEW';
+
+    /**
+     * the column name for the CHILDREN_VIEW field
+     */
+    const CHILDREN_VIEW = 'view.CHILDREN_VIEW';
 
     /**
      * the column name for the CREATED_AT field
@@ -112,12 +122,12 @@ class ViewTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'View', 'Source', 'SourceId', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'view', 'source', 'sourceId', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ViewTableMap::ID, ViewTableMap::VIEW, ViewTableMap::SOURCE, ViewTableMap::SOURCE_ID, ViewTableMap::CREATED_AT, ViewTableMap::UPDATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'VIEW', 'SOURCE', 'SOURCE_ID', 'CREATED_AT', 'UPDATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'view', 'source', 'source_id', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'View', 'Source', 'SourceId', 'SubtreeView', 'ChildrenView', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'view', 'source', 'sourceId', 'subtreeView', 'childrenView', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ViewTableMap::ID, ViewTableMap::VIEW, ViewTableMap::SOURCE, ViewTableMap::SOURCE_ID, ViewTableMap::SUBTREE_VIEW, ViewTableMap::CHILDREN_VIEW, ViewTableMap::CREATED_AT, ViewTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'VIEW', 'SOURCE', 'SOURCE_ID', 'SUBTREE_VIEW', 'CHILDREN_VIEW', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'view', 'source', 'source_id', 'subtree_view', 'children_view', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -127,12 +137,12 @@ class ViewTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'View' => 1, 'Source' => 2, 'SourceId' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'view' => 1, 'source' => 2, 'sourceId' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
-        self::TYPE_COLNAME       => array(ViewTableMap::ID => 0, ViewTableMap::VIEW => 1, ViewTableMap::SOURCE => 2, ViewTableMap::SOURCE_ID => 3, ViewTableMap::CREATED_AT => 4, ViewTableMap::UPDATED_AT => 5, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'VIEW' => 1, 'SOURCE' => 2, 'SOURCE_ID' => 3, 'CREATED_AT' => 4, 'UPDATED_AT' => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'view' => 1, 'source' => 2, 'source_id' => 3, 'created_at' => 4, 'updated_at' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'View' => 1, 'Source' => 2, 'SourceId' => 3, 'SubtreeView' => 4, 'ChildrenView' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'view' => 1, 'source' => 2, 'sourceId' => 3, 'subtreeView' => 4, 'childrenView' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(ViewTableMap::ID => 0, ViewTableMap::VIEW => 1, ViewTableMap::SOURCE => 2, ViewTableMap::SOURCE_ID => 3, ViewTableMap::SUBTREE_VIEW => 4, ViewTableMap::CHILDREN_VIEW => 5, ViewTableMap::CREATED_AT => 6, ViewTableMap::UPDATED_AT => 7, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'VIEW' => 1, 'SOURCE' => 2, 'SOURCE_ID' => 3, 'SUBTREE_VIEW' => 4, 'CHILDREN_VIEW' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'view' => 1, 'source' => 2, 'source_id' => 3, 'subtree_view' => 4, 'children_view' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -155,6 +165,8 @@ class ViewTableMap extends TableMap
         $this->addColumn('VIEW', 'View', 'VARCHAR', false, 255, null);
         $this->addColumn('SOURCE', 'Source', 'CLOB', false, null, null);
         $this->addColumn('SOURCE_ID', 'SourceId', 'INTEGER', false, null, null);
+        $this->addColumn('SUBTREE_VIEW', 'SubtreeView', 'VARCHAR', false, 255, '');
+        $this->addColumn('CHILDREN_VIEW', 'ChildrenView', 'VARCHAR', false, 255, '');
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -321,6 +333,8 @@ class ViewTableMap extends TableMap
             $criteria->addSelectColumn(ViewTableMap::VIEW);
             $criteria->addSelectColumn(ViewTableMap::SOURCE);
             $criteria->addSelectColumn(ViewTableMap::SOURCE_ID);
+            $criteria->addSelectColumn(ViewTableMap::SUBTREE_VIEW);
+            $criteria->addSelectColumn(ViewTableMap::CHILDREN_VIEW);
             $criteria->addSelectColumn(ViewTableMap::CREATED_AT);
             $criteria->addSelectColumn(ViewTableMap::UPDATED_AT);
         } else {
@@ -328,6 +342,8 @@ class ViewTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.VIEW');
             $criteria->addSelectColumn($alias . '.SOURCE');
             $criteria->addSelectColumn($alias . '.SOURCE_ID');
+            $criteria->addSelectColumn($alias . '.SUBTREE_VIEW');
+            $criteria->addSelectColumn($alias . '.CHILDREN_VIEW');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
         }
