@@ -78,7 +78,7 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
             }
         }
 
-        $foundView = $sourceView = false;
+        $foundView = $sourceView = null;
 
         if ($objectType == 'category') {
             $foundView = $this->searchInParents($objectId, $objectType, CategoryQuery::create(), false, $sourceView);
@@ -98,25 +98,36 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
     }
 
     /**
+     * Try to find the custom template in the object parent.
+     *
      * @param $objectId int the object id
      * @param $objectType string the object type
      * @param $objectQuery ModelCriteria the object query to use
-     * @param $viewQuery ViewQuery the view query, to prevent creation of a new query
      * @param $forLeaf bool seach for a leaf (product, content) or node (category, folder)
+     * @param $sourceView ModelCriteria the model of the found View, returned ti the caller.
+     *
      * @return bool
      */
     protected function searchInParents($objectId, $objectType, $objectQuery, $forLeaf, &$sourceView)
     {
+        // For a folder or a category, search template in the object's parent instead of getting object's one.
+        // To do this, we will ignore the first loop iteration.
+        $ignoreIteration = ! $forLeaf;
+
         while (null !== $object = $objectQuery->findPk($objectId)) {
-            if (null !== $viewObj = ViewQuery::create()->filterBySourceId($object->getId())->findOneBySource($objectType)) {
-                $viewName = $forLeaf ? $viewObj->getChildrenView() : $viewObj->getSubtreeView();
+            if (! $ignoreIteration) {
+                if (null !== $viewObj = ViewQuery::create()->filterBySourceId($object->getId())->findOneBySource($objectType)) {
+                    $viewName = $forLeaf ? $viewObj->getChildrenView() : $viewObj->getSubtreeView();
 
-                if (!empty($viewName)) {
-                    $sourceView = $viewObj;
+                    if (!empty($viewName)) {
+                        $sourceView = $viewObj;
 
-                    return $viewName;
+                        return $viewName;
+                    }
                 }
             }
+
+            $ignoreIteration = false;
 
             // Not found. Try to find the view in the parent object.
             $objectId = $object->getParent();
