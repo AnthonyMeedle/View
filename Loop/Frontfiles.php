@@ -31,13 +31,9 @@ use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Core\Template\TemplateDefinition;
 use Thelia\Core\Template\TemplateHelper;
 use Thelia\Core\Template\TheliaTemplateHelper;
-use Thelia\Model\Module;
-use Thelia\Model\ModuleQuery;
 use Thelia\Type;
-
 
 /**
  * Class Commentaire
@@ -69,7 +65,17 @@ class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
 
         $list = [];
 
-        $finder = Finder::create()->files()->in($frontTemplatePath)->ignoreDotFiles(true)->sortByName()->name("*.html");
+        $finder = Finder::create()
+            ->files()
+            ->in($frontTemplatePath)
+            // Ignore bower and node directories
+            ->notPath('/bower_components/')
+            ->notPath('/node_modules/')
+            // Ignore VCS related directories
+            ->ignoreVCS(true)
+            ->ignoreDotFiles(true)
+            ->sortByName()
+            ->name("*.html");
 
         foreach ($finder as $file) {
             $list[] = $file;
