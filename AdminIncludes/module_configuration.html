@@ -1,0 +1,166 @@
+{$useDefault = "<span class=\"text-muted\">{intl l='Default view' d='view.ai'}</span>"}
+
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+
+        <div class="title title-without-tabs">
+            {intl d='view.ai' l="List of specific views"}
+        </div>
+
+        <div class="general-block-decorator">
+            <table class="table table-striped table-condensed table-left-aligned">
+                <caption class="clearfix">{intl l="Categories" d="view.ai"}</caption>
+
+                {ifloop rel="views"}
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>This category view</th>
+                        <th>Children categories view</th>
+                        <th>Products view</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loop name="views" type="view" source="category"}
+                        <tr>
+                            {loop name="info" type="categoy" id=$SOURCE_ID}
+                                <td><a href="{url path="/admin/categories/update" category_id=$ID current_tab='modules'}">{$ID}</a></td>
+                                <td><a href="{url path="/admin/categories/update" category_id=$ID current_tab='modules'}">{$TITLE}</a></td>
+                            {/loop}
+                            <td>{$VIEW|default:$useDefault nofilter}</td>
+                            <td>{$SUBTREE_VIEW|default:$useDefault nofilter}</td>
+                            <td>{$CHILDREN_VIEW|default:$useDefault nofilter}</td>
+                        </tr>
+                    {/loop}
+                    </tbody>
+                {/ifloop}
+
+                {elseloop rel="views"}
+                    <thead>
+                    <tr>
+                        <td>
+                            <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
+                        </td>
+                    </tr>
+                    </thead>
+                {/elseloop}
+            </table>
+        </div>
+
+        <div class="general-block-decorator">
+            <table class="table table-striped table-condensed table-left-aligned">
+                <caption class="clearfix">{intl l="Products" d="view.ai"}</caption>
+
+                {ifloop rel="views"}
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>This product view</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loop name="views" type="view" source="product"}
+                        <tr>
+                            {loop name="info" type="product" id=$SOURCE_ID}
+                                <td><a href="{url path="/admin/products/update" product_id=$ID current_tab='modules'}">{$ID}</a></td>
+                                <td><a href="{url path="/admin/products/update" product_id=$ID current_tab='modules'}">{$TITLE}</a></td>
+                            {/loop}
+                            <td>{$VIEW|default:$useDefault nofilter}</td>
+                        </tr>
+                    {/loop}
+                    </tbody>
+                {/ifloop}
+
+                {elseloop rel="views"}
+                    <thead>
+                        <tr>
+                            <td>
+                                <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
+                            </td>
+                        </tr>
+                    </thead>
+                {/elseloop}
+            </table>
+        </div>
+
+        <div class="general-block-decorator">
+            <table class="table table-striped table-condensed table-left-aligned">
+                <caption class="clearfix">{intl l="Folders" d="view.ai"}</caption>
+
+                {ifloop rel="views"}
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>This folder view</th>
+                        <th>Children folders view</th>
+                        <th>Contents view</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loop name="views" type="view" source="folder"}
+                        <tr>
+                            {loop name="info" type="folder" id=$SOURCE_ID}
+                                <td><a href="{url path="/admin/folders/update/$ID" current_tab='modules'}">{$ID}</a></td>
+                                <td><a href="{url path="/admin/folders/update/$ID" current_tab='modules'}">{$TITLE}</a></td>
+                            {/loop}
+                            <td>{$VIEW|default:$useDefault nofilter}</td>
+                            <td>{$SUBTREE_VIEW|default:$useDefault nofilter}</td>
+                            <td>{$CHILDREN_VIEW|default:$useDefault nofilter}</td>
+                        </tr>
+                    {/loop}
+                    </tbody>
+                {/ifloop}
+
+                {elseloop rel="views"}
+                    <thead>
+                    <tr>
+                        <td>
+                            <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
+                        </td>
+                    </tr>
+                    </thead>
+                {/elseloop}
+            </table>
+        </div>
+
+        <div class="general-block-decorator">
+            <table class="table table-striped table-condensed table-left-aligned">
+                <caption class="clearfix">{intl l="Contents" d="view.ai"}</caption>
+
+                {ifloop rel="views"}
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>This content view</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {loop name="views" type="view" source="content"}
+                        <tr>
+                            {loop name="info" type="content" id=$SOURCE_ID}
+                                <td><a href="{url path="/admin/content/update/$ID" current_tab='modules'}">{$ID}</a></td>
+                                <td><a href="{url path="/admin/content/update/$ID" current_tab='modules'}">{$TITLE}</a></td>
+                            {/loop}
+                            <td>{$VIEW|default:$useDefault nofilter}</td>
+                        </tr>
+                    {/loop}
+                    </tbody>
+                {/ifloop}
+
+                {elseloop rel="views"}
+                    <thead>
+                    <tr>
+                        <td>
+                            <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
+                        </td>
+                    </tr>
+                    </thead>
+                {/elseloop}
+            </table>
+        </div>
+    </div>
+</div>

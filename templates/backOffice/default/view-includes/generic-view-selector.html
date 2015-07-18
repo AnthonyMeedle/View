@@ -115,6 +115,13 @@ $successUrl : the form success url
                 {/form_field}
 
                 <div class="form-group">
+                    <p class="form-control-static pull-left">
+                        <a href="{url path="/admin/module/View"}">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                            {intl d="view.bo.default" l="List of all specific views"}
+                        </a>
+                    </p>
+
                     <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-success pull-right">
                         {intl d="view.bo.default" l='Enregistrer'} <span class="glyphicon glyphicon-ok"></span>
                     </button>
