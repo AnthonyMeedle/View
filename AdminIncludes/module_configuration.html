@@ -23,8 +23,9 @@
                     </thead>
                     <tbody>
                     {loop name="views" type="view" source="category"}
+                    {ifloop rel="info"}
                         <tr>
-                            {loop name="info" type="categoy" id=$SOURCE_ID}
+                            {loop name="info" type="category" id=$SOURCE_ID}
                                 <td><a href="{url path="/admin/categories/update" category_id=$ID current_tab='modules'}">{$ID}</a></td>
                                 <td><a href="{url path="/admin/categories/update" category_id=$ID current_tab='modules'}">{$TITLE}</a></td>
                             {/loop}
@@ -32,6 +33,7 @@
                             <td>{$SUBTREE_VIEW|default:$useDefault nofilter}</td>
                             <td>{$CHILDREN_VIEW|default:$useDefault nofilter}</td>
                         </tr>
+                    {/ifloop}
                     {/loop}
                     </tbody>
                 {/ifloop}
@@ -62,6 +64,7 @@
                     </thead>
                     <tbody>
                     {loop name="views" type="view" source="product"}
+                    {ifloop rel="info"}
                         <tr>
                             {loop name="info" type="product" id=$SOURCE_ID}
                                 <td><a href="{url path="/admin/products/update" product_id=$ID current_tab='modules'}">{$ID}</a></td>
@@ -69,17 +72,18 @@
                             {/loop}
                             <td>{$VIEW|default:$useDefault nofilter}</td>
                         </tr>
+                    {/ifloop}
                     {/loop}
                     </tbody>
                 {/ifloop}
 
                 {elseloop rel="views"}
                     <thead>
-                        <tr>
-                            <td>
-                                <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            <div class="alert alert-info">{intl l="Aucune vue spécifique trouvée." d="view.ai"}</div>
+                        </td>
+                    </tr>
                     </thead>
                 {/elseloop}
             </table>
@@ -101,6 +105,7 @@
                     </thead>
                     <tbody>
                     {loop name="views" type="view" source="folder"}
+                    {ifloop rel="info"}
                         <tr>
                             {loop name="info" type="folder" id=$SOURCE_ID}
                                 <td><a href="{url path="/admin/folders/update/$ID" current_tab='modules'}">{$ID}</a></td>
@@ -110,6 +115,7 @@
                             <td>{$SUBTREE_VIEW|default:$useDefault nofilter}</td>
                             <td>{$CHILDREN_VIEW|default:$useDefault nofilter}</td>
                         </tr>
+                    {/ifloop}
                     {/loop}
                     </tbody>
                 {/ifloop}
@@ -140,6 +146,7 @@
                     </thead>
                     <tbody>
                     {loop name="views" type="view" source="content"}
+                    {ifloop rel="info"}
                         <tr>
                             {loop name="info" type="content" id=$SOURCE_ID}
                                 <td><a href="{url path="/admin/content/update/$ID" current_tab='modules'}">{$ID}</a></td>
@@ -147,6 +154,7 @@
                             {/loop}
                             <td>{$VIEW|default:$useDefault nofilter}</td>
                         </tr>
+                    {/ifloop}
                     {/loop}
                     </tbody>
                 {/ifloop}
