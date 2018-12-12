@@ -68,9 +68,8 @@ class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
         $finder = Finder::create()
             ->files()
             ->in($frontTemplatePath)
-            // Ignore bower and node directories
-            ->notPath('/bower_components/')
-            ->notPath('/node_modules/')
+            // Do not enter in bower and node directories
+            ->exclude(['bower_components', 'node_modules'])
             // Ignore VCS related directories
             ->ignoreVCS(true)
             ->ignoreDotFiles(true)
