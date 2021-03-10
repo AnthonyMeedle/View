@@ -26,7 +26,12 @@ class ControllerListener implements EventSubscriberInterface
         ];
 
         $request = $event->getRequest();
-
+		$session = $request->getSession();
+		$numpageview = $session->get('numPageView');
+		if(empty($numpageview))$numpageview=0;
+		$numpageview++;
+		
+		
         $currentView = $event->getRequest()->attributes->get('_view');
 
         // Try to find a direct match. A view is defined for the object.
@@ -40,6 +45,7 @@ class ControllerListener implements EventSubscriberInterface
 
                 if ($findEvent->hasView()) {
                     $event->getRequest()->query->set('view', $findEvent->getView());
+					$session->set('meedleview', $findEvent->getView());
                 }
 
                 return;
