@@ -40,6 +40,7 @@ $successUrl : the form success url
                             {intl d="view.bo.default" l="Choisissez une vue :"}
                         </label>
 
+                        {$viewSelected = ''}
                         {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
                             {$viewSelected = $VIEW}
                         {/loop}
@@ -68,6 +69,7 @@ $successUrl : the form success url
                                         {intl d="view.bo.default" l="Choisissez une vue :"}
                                     </label>
 
+                                    {$viewSelected = ''}
                                     {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
                                     {$viewSelected = $SUBTREE_VIEW}
                                     {/loop}
@@ -91,6 +93,7 @@ $successUrl : the form success url
                                         {intl d="view.bo.default" l="Choisissez une vue :"}
                                     </label>
 
+                                    {$viewSelected = ''}
                                     {loop type="view" name="viewselected" source=$sourceType source_id=$sourceId}
                                     {$viewSelected = $CHILDREN_VIEW}
                                     {/loop}

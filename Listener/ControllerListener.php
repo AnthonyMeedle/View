@@ -8,15 +8,16 @@
 
 namespace View\Listener;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use View\Event\FindViewEvent;
 
 class ControllerListener implements EventSubscriberInterface
 {
 
-    public function controllerListener(FilterControllerEvent $event)
+    public function controllerListener(ControllerEvent $event, string $eventName, EventDispatcherInterface $dispatcher): void
     {
         static $possibleMatches = [
             'product_id'  => 'product',
@@ -26,26 +27,19 @@ class ControllerListener implements EventSubscriberInterface
         ];
 
         $request = $event->getRequest();
-		$session = $request->getSession();
-		$numpageview = $session->get('numPageView');
-		if(empty($numpageview))$numpageview=0;
-		$numpageview++;
-		
-		
-        $currentView = $event->getRequest()->attributes->get('_view');
 
+        $currentView = $event->getRequest()->attributes->get('_view');
         // Try to find a direct match. A view is defined for the object.
         foreach ($possibleMatches as $parameter => $objectType) {
             // Search for a view when the parameter is present in the request, and
             // the current view is the default one (fix for https://github.com/AnthonyMeedle/thelia-modules-View/issues/6)
-            if ($currentView == $objectType && (null !== $objectId = $request->query->get($parameter))) {
-                $findEvent = new FindViewEvent($objectId, $objectType);
+            if ($currentView === $objectType && (null !== $objectId = $request->query->get($parameter))) {
 
-                $event->getDispatcher()->dispatch('view.find', $findEvent);
+                $findEvent = new FindViewEvent($objectId, $objectType);
+                $dispatcher->dispatch($findEvent, 'view.find');
 
                 if ($findEvent->hasView()) {
                     $event->getRequest()->query->set('view', $findEvent->getView());
-					$session->set('meedleview', $findEvent->getView());
                 }
 
                 return;

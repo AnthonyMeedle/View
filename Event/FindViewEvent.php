@@ -35,7 +35,7 @@ class FindViewEvent extends ActionEvent
 {
     /** @var  int */
     protected $objectId;
-    /** @var  int */
+    /** @var  string */
     protected $objectType;
     /** @var  string */
     protected $view;
@@ -80,7 +80,7 @@ class FindViewEvent extends ActionEvent
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getObjectType()
     {

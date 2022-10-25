@@ -30,4 +30,14 @@
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>
+
+    <hooks>
+        <hook id="view.hookmanager.hook" class="View\Hook\HookManager">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration"/>
+            <tag name="hook.event_listener" event="category.tab-content" type="back" method="onEditModuleTab"/>
+            <tag name="hook.event_listener" event="content.tab-content" type="back" method="onEditModuleTab"/>
+            <tag name="hook.event_listener" event="folder.tab-content" type="back" method="onEditModuleTab"/>
+            <tag name="hook.event_listener" event="product.tab-content" type="back" method="onEditModuleTab"/>
+        </hook>
+    </hooks>
 </config>

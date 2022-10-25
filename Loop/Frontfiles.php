@@ -31,7 +31,6 @@ use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Core\Template\TemplateHelper;
 use Thelia\Core\Template\TheliaTemplateHelper;
 use Thelia\Type;
 

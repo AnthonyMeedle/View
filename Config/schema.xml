@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database defaultIdMethod="native" name="thelia" namespace="View\Model">
+<database defaultIdMethod="native" name="TheliaMain" namespace="View\Model">
     <!--
     See propel documentation on http://propelorm.org for all information about schema file
     -->
@@ -12,6 +12,6 @@
         <column name="children_view" size="255" type="VARCHAR" default="" />
         <behavior name="timestampable" />
     </table>
-	
+
     <external-schema filename="local/config/schema.xml" referenceOnly="true" />
 </database>

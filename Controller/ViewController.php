@@ -23,7 +23,9 @@
 
 namespace View\Controller;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Log\Tlog;
 use View\Event\ViewEvent;
 use View\Form\ViewForm;
@@ -34,9 +36,9 @@ use View\Form\ViewForm;
  */
 class ViewController extends BaseAdminController
 {
-    public function createAction($source_id)
+    public function createAction($source_id, Request $request, EventDispatcherInterface $dispatcher)
     {
-        $form = new ViewForm($this->getRequest());
+        $form = $this->createForm('view.create');
 
         try {
             $viewForm = $this->validateForm($form);
@@ -50,13 +52,13 @@ class ViewController extends BaseAdminController
                 $data['source_id']
             );
 
-            if ($data['has_subtree'] != 0) {
+            if ((int) $data['has_subtree'] !== 0) {
                 $event
                     ->setChildrenView($data['children_view'])
                     ->setSubtreeView($data['subtree_view']);
             }
 
-            $this->dispatch('view.create', $event);
+            $dispatcher->dispatch($event, 'view.create');
 
             return $this->generateSuccessRedirect($form);
         } catch (\Exception $ex) {
@@ -71,7 +73,7 @@ class ViewController extends BaseAdminController
             $form
         );
 
-        $sourceType = $this->getRequest()->get('source_type');
+        $sourceType = $request->get('source_type');
 
         return $this->render(
             $sourceType . '-edit',

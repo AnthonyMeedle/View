@@ -41,7 +41,12 @@ use View\Model\ViewQuery;
  */
 class ViewListener extends BaseAction implements EventSubscriberInterface
 {
-    public function create(ViewEvent $event)
+    /**
+     * @param ViewEvent $event
+     * @return void
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function create(ViewEvent $event): void
     {
         if (null === $view = ViewQuery::create()->filterBySourceId($event->getSourceId())->findOneBySource($event->getSource())) {
             $view = new View();
@@ -60,7 +65,7 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
         }
     }
 
-    public function find(FindViewEvent $event)
+    public function find(FindViewEvent $event): void
     {
         $objectType = $event->getObjectType();
         $objectId   = $event->getObjectId();
@@ -80,15 +85,15 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
 
         $foundView = $sourceView = null;
 
-        if ($objectType == 'category') {
+        if ($objectType === 'category') {
             $foundView = $this->searchInParents($objectId, $objectType, CategoryQuery::create(), false, $sourceView);
-        } elseif ($objectType == 'folder') {
+        } elseif ($objectType === 'folder') {
             $foundView = $this->searchInParents($objectId, $objectType, FolderQuery::create(), false, $sourceView);
-        } elseif ($objectType == 'product') {
+        } elseif ($objectType === 'product') {
             if (null !== $product = ProductQuery::create()->findPk($objectId)) {
                 $foundView = $this->searchInParents($product->getDefaultCategoryId(), 'category', CategoryQuery::create(), true, $sourceView);
             }
-        } elseif ($objectType == 'content') {
+        } elseif ($objectType === 'content') {
             if (null !== $content = ContentQuery::create()->findPk($objectId)) {
                 $foundView = $this->searchInParents($content->getDefaultFolderId(), 'folder', FolderQuery::create(), true, $sourceView);
             }
@@ -106,9 +111,9 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
      * @param $forLeaf bool seach for a leaf (product, content) or node (category, folder)
      * @param $sourceView ModelCriteria the model of the found View, returned ti the caller.
      *
-     * @return bool
+     * @return bool|string
      */
-    protected function searchInParents($objectId, $objectType, $objectQuery, $forLeaf, &$sourceView)
+    protected function searchInParents($objectId, $objectType, $objectQuery, $forLeaf, &$sourceView): bool|string
     {
         // For a folder or a category, search template in the object's parent instead of getting object's one.
         // To do this, we will ignore the first loop iteration.

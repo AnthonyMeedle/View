@@ -23,6 +23,8 @@
 
 namespace View\Form;
 
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
@@ -61,13 +63,13 @@ class ViewForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add('view', 'text', array(
+            ->add('view', TextType::class, array(
                 'label' => Translator::getInstance()->trans('View name', [], View::DOMAIN),
                 'label_attr' => array(
                     'for' => 'view_view'
                 )
             ))
-            ->add('has_subtree', 'integer', array(
+            ->add('has_subtree', IntegerType::class, array(
                 'constraints' => array(
                     new NotBlank()
                 ),
@@ -77,14 +79,14 @@ class ViewForm extends BaseForm
                 )
             ))
 
-            ->add('subtree_view', 'text', array(
+            ->add('subtree_view', TextType::class, array(
                 'required' => false,
                 'label' => Translator::getInstance()->trans('Sub-tree view name', [], View::DOMAIN),
                 'label_attr' => array(
                     'for' => 'view_subtree_view'
                 )
             ))
-            ->add('children_view', 'text', array(
+            ->add('children_view', TextType::class, array(
                 'required' => false,
                 'label' => Translator::getInstance()->trans('Children view name', [], View::DOMAIN),
                 'label_attr' => array(
@@ -92,7 +94,7 @@ class ViewForm extends BaseForm
                 )
             ))
 
-            ->add('source', 'text', array(
+            ->add('source', TextType::class, array(
                 'constraints' => array(
                     new NotBlank()
                 ),
@@ -101,7 +103,7 @@ class ViewForm extends BaseForm
                     'for' => 'view_source'
                 )
             ))
-            ->add('source_id', 'integer', array(
+            ->add('source_id', IntegerType::class, array(
                 'constraints' => array(
                     new NotBlank(),
                     new GreaterThan([ 'value' => 0])
@@ -118,7 +120,7 @@ class ViewForm extends BaseForm
     /**
      * @return string the name of you form. This name must be unique
      */
-    public function getName()
+    public static function getName()
     {
         return "view_form";
     }

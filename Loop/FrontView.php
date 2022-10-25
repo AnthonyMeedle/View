@@ -49,7 +49,7 @@ class FrontView extends BaseLoop implements ArraySearchLoopInterface
     {
         $findEvent = new FindViewEvent($this->getSourceId(), $this->getSource());
 
-        $this->dispatcher->dispatch('view.find', $findEvent);
+        $this->dispatcher->dispatch($findEvent, 'view.find');
 
         return $findEvent->hasView() ? [ [
             'name' => $findEvent->getView(),
