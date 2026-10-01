@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: chevrier_meedle
@@ -16,8 +18,11 @@ use View\Event\FindViewEvent;
 
 class ControllerListener implements EventSubscriberInterface
 {
+    public function __construct(private readonly EventDispatcherInterface $dispatcher)
+    {
+    }
 
-    public function controllerListener(ControllerEvent $event, string $eventName, EventDispatcherInterface $dispatcher): void
+    public function controllerListener(ControllerEvent $event): void
     {
         static $possibleMatches = [
             'product_id'  => 'product',
@@ -33,13 +38,16 @@ class ControllerListener implements EventSubscriberInterface
         foreach ($possibleMatches as $parameter => $objectType) {
             // Search for a view when the parameter is present in the request, and
             // the current view is the default one (fix for https://github.com/AnthonyMeedle/thelia-modules-View/issues/6)
-            if ($currentView === $objectType && (null !== $objectId = $request->query->get($parameter))) {
+            $objectId = $request->attributes->get($parameter) ?? $request->query->get($parameter);
 
-                $findEvent = new FindViewEvent($objectId, $objectType);
-                $dispatcher->dispatch($findEvent, 'view.find');
+            if ($currentView === $objectType && null !== $objectId && (int) $objectId > 0) {
+
+                $findEvent = new FindViewEvent((int) $objectId, $objectType);
+                $this->dispatcher->dispatch($findEvent, FindViewEvent::FIND);
 
                 if ($findEvent->hasView()) {
-                    $event->getRequest()->query->set('view', $findEvent->getView());
+                    // Thelia 3's ViewRenderer reads the routed `_view` attribute.
+                    $request->attributes->set('_view', $findEvent->getView());
                 }
 
                 return;
@@ -47,7 +55,7 @@ class ControllerListener implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => ["controllerListener", 128]

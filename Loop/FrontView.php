@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -37,7 +39,7 @@ use View\Event\FindViewEvent;
  */
 class FrontView extends BaseLoop implements ArraySearchLoopInterface
 {
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createAnyTypeArgument('source'),
@@ -45,11 +47,11 @@ class FrontView extends BaseLoop implements ArraySearchLoopInterface
         );
     }
 
-    public function buildArray()
+    public function buildArray(): array
     {
         $findEvent = new FindViewEvent($this->getSourceId(), $this->getSource());
 
-        $this->dispatcher->dispatch($findEvent, 'view.find');
+        $this->dispatcher->dispatch($findEvent, FindViewEvent::FIND);
 
         return $findEvent->hasView() ? [ [
             'name' => $findEvent->getView(),
@@ -63,7 +65,7 @@ class FrontView extends BaseLoop implements ArraySearchLoopInterface
      *
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         foreach ($loopResult->getResultDataCollection() as $view) {
             $loopResultRow = new LoopResultRow($view);

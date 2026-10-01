@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -73,7 +75,7 @@ class View extends BaseLoop implements PropelSearchLoopInterface
      *
      * @return \Thelia\Core\Template\Loop\Argument\ArgumentCollection
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
@@ -88,7 +90,7 @@ class View extends BaseLoop implements PropelSearchLoopInterface
      *
      * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ViewQuery
     {
         $search = ViewQuery::create();
 
@@ -117,7 +119,7 @@ class View extends BaseLoop implements PropelSearchLoopInterface
      *
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         /** @var \View\Model\View $view */
         foreach ($loopResult->getResultDataCollection() as $view) {

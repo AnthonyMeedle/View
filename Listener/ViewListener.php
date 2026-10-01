@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -48,11 +50,10 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
      */
     public function create(ViewEvent $event): void
     {
-        if (null === $view = ViewQuery::create()->filterBySourceId($event->getSourceId())->findOneBySource($event->getSource())) {
-            $view = new View();
-        }
+        $view = ViewQuery::create()->filterBySourceId($event->getSourceId())->findOneBySource($event->getSource());
 
         if ($event->hasDefinedViews()) {
+            $view ??= new View();
             $view
                 ->setView($event->getViewName())
                 ->setSource($event->getSource())
@@ -60,7 +61,7 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
                 ->setSubtreeView($event->getSubtreeView())
                 ->setChildrenView($event->getChildrenView())
                 ->save();
-        } else {
+        } elseif (null !== $view) {
             $view->delete();
         }
     }
@@ -141,11 +142,11 @@ class ViewListener extends BaseAction implements EventSubscriberInterface
         return false;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
-        return array(
-            'view.create' => array('create', 128),
-            'view.find'   => array('find', 128)
-        );
+        return [
+            ViewEvent::CREATE => ['create', 128],
+            FindViewEvent::FIND => ['find', 128],
+        ];
     }
 }

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -24,11 +26,12 @@
 namespace View\Controller;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
-use Thelia\Core\HttpFoundation\Request;
-use Thelia\Log\Tlog;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use View\Event\ViewEvent;
-use View\Form\ViewForm;
 
 /**
  * Class ViewController
@@ -36,51 +39,44 @@ use View\Form\ViewForm;
  */
 class ViewController extends BaseAdminController
 {
-    public function createAction($source_id, Request $request, EventDispatcherInterface $dispatcher)
+    private const SOURCES = ['category', 'content', 'folder', 'product'];
+
+    #[Route('/admin/view/add/{source_id}', name: 'view.add', methods: ['POST'], requirements: ['source_id' => '\\d+'])]
+    public function createAction(int $source_id, EventDispatcherInterface $dispatcher): Response
     {
-        $form = $this->createForm('view.create');
+        if (null !== $response = $this->checkAuth([AdminResources::MODULE], ['View'], AccessManager::UPDATE)) {
+            return $response;
+        }
+
+        $form = $this->createForm('view_form');
 
         try {
             $viewForm = $this->validateForm($form);
-
             $data = $viewForm->getData();
 
+            if ($source_id !== (int) $data['source_id'] || !\in_array($data['source'], self::SOURCES, true)) {
+                throw new \InvalidArgumentException('Invalid view source.');
+            }
 
             $event = new ViewEvent(
-                $data['view'],
+                (string) $data['view'],
                 $data['source'],
-                $data['source_id']
+                $source_id
             );
 
             if ((int) $data['has_subtree'] !== 0) {
                 $event
-                    ->setChildrenView($data['children_view'])
-                    ->setSubtreeView($data['subtree_view']);
+                    ->setChildrenView((string) $data['children_view'])
+                    ->setSubtreeView((string) $data['subtree_view']);
             }
 
-            $dispatcher->dispatch($event, 'view.create');
+            $dispatcher->dispatch($event, ViewEvent::CREATE);
 
             return $this->generateSuccessRedirect($form);
-        } catch (\Exception $ex) {
-            $error_message = $ex->getMessage();
+        } catch (\Throwable $exception) {
+            $this->addFlash('danger', $exception->getMessage());
 
-            Tlog::getInstance()->error("Failed to validate View form: $error_message");
+            return $this->generateErrorRedirect($form);
         }
-
-        $this->setupFormErrorContext(
-            'Failed to process View form data',
-            $error_message,
-            $form
-        );
-
-        $sourceType = $request->get('source_type');
-
-        return $this->render(
-            $sourceType . '-edit',
-            [
-                $sourceType . '_id' => $source_id,
-                'current_tab' => 'modules'
-            ]
-        );
     }
 }

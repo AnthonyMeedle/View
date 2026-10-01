@@ -1,92 +1,47 @@
-View module
-===========
+# View for Thelia 3
 
-Using this module, you can select a specific view for any category, product, folder or content.
+View lets an administrator choose the front-office Twig view used for a category,
+product, folder or content. A category or folder can also define the view inherited
+by its descendants and by its direct leaf objects.
+
+## Requirements
+
+- Thelia 3.0 or later
+- PHP 8.3 or later
+- The Twig back office (`default-twig`) is fully supported. The legacy Smarty back
+  office templates are kept for transitional installations.
 
 ## Installation
 
-```
-composer require thelia/view-module:~2.0.1
-```
+Install the module in `local/modules/View`, refresh the module list, then activate
+`View`. The installation is idempotent and does not drop an existing `view` table.
 
-Activate the module and go to the "Modules" tab of any category, product, folder or content configuration page.
+The selector appears in the **Modules** tab of category, product, folder and content
+edit pages. The module configuration page lists every explicit assignment.
 
-## The loop view
+Only public, root-level views from the active front-office theme (and its parent
+themes) are offered. With Flexy these are `.html.twig` files; their extension is not
+stored in the database.
 
-Get the specific view of an object and the specific views of its sub-elements.
+## Automatic resolution
 
-### Parameters
+Resolution follows this order:
 
-|Argument       |Description    |
-|---            |---            |
-|**id**         | The ID of the specific view   |
-|**view**       | The Name of the specific view |
-|**source**     | The type of the source associated. The possible values are `category`, `product`, `folder` or `content`   |
-|**source_id**  | The ID of the source associated  |
+1. the view directly assigned to the current object;
+2. for a category or folder, the closest ancestor's subtree view;
+3. for a product or content, the closest ancestor's children view;
+4. the default view supplied by the active theme.
 
-### Output variables
+The module updates Thelia 3's `_view` request attribute before rendering, so custom
+views work for rewritten URLs as well as classic query-string URLs.
 
-|Variables      |Description    |
-|---            |---            |
-|$ID            | The Id of the specific view |
-|$SOURCE_ID     | The ID of the source associated |
-|$SOURCE        | The source associated (`category`, `product`, `folder` or `content`)|
-|$VIEW          | The name of the specific view |
-|$SUBTREE_VIEW  | The name of the specific view associated with the sub-element (sub-category or sub-folder) of the source |
-|$CHILDREN_VIEW | The name of the specific view associated with the children (products or contents) of the source|
+## Legacy loops
 
-### Example
+The historical Smarty loop aliases remain available during migration:
 
-```
-{loop type="view" name="my-specific-view" source="content" source_id=11}...{/loop}
-```
+- `view`
+- `frontview` (also auto-registered as `front_view`)
+- `frontfiles`
 
-## The loop frontfiles
-
-Return all the front office templates and their path.
-
-### Parameters
-
-This loop have no parameters
-
-### Output variables
-
-|Variables      |Description    |
-|---            |---            |
-|$NAME          | The template name |
-|$FILE          | The file name |
-|$RELATIVE_PATH | The relative path of the template |
-|$ABSOLUTE_PATH | The absolute path of the template |
-
-
-### Example
-
-```
-{loop type="frontfile" name="my-fo-template"}...{/loop}
-```
-
-## The loop frontview
-
-Return view of an object if the object have a specific view.
-
-### Parameters
-
-|Argument      |Description    |
-|---           |---            |
-|**source**    | The source of the object (`category`, `product`, `folder` or `content`) |
-|**source_id** | The ID of the object |
-
-
-### Output variables
-
-|Variables  |Description    |
-|---        |---            |
-|FRONT_VIEW | The name of the view |
-|VIEW_ID    | The id of the view in the view table |
-
-
-### Example
-
-```
-{loop type="frontview" name="my-frontview-loop" source="category" source_id=11 }...{/loop}
-```
+`frontfiles` now recognizes both `.html.twig` and `.html` views and excludes internal
+theme components that cannot be rendered as pages.

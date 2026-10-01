@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*      This file is part of the Thelia package.                                     */
 /*                                                                                   */
@@ -14,29 +16,32 @@ namespace View;
 
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
-use Thelia\Install\Database;
+use Thelia\Core\Install\Database;
 use Thelia\Module\BaseModule;
 
 class View extends BaseModule
 {
     public const DOMAIN = 'view';
 
-    public function postActivation(ConnectionInterface $con = null): void
+    public function preActivation(?ConnectionInterface $con = null): bool
     {
-        $database = new Database($con->getWrappedConnection());
-        $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
-    }
+        (new Database($con))->insertSql(null, [__DIR__.'/Config/thelia.sql']);
 
-    public function update($currentVersion, $newVersion, ?ConnectionInterface $con = null): void
-    {
-        $database = new Database($con->getWrappedConnection());
-        $database->insertSql(null, array(__DIR__ . '/Config/update.sql'));
+        return true;
     }
 
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
-        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+        $servicesConfigurator
+            ->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([
+                __DIR__.'/Config',
+                __DIR__.'/I18n',
+                __DIR__.'/Model',
+                __DIR__.'/templates',
+                __DIR__.'/Tests',
+                __DIR__.'/View.php',
+            ])
             ->autowire(true)
             ->autoconfigure(true);
     }

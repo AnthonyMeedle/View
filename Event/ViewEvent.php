@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -31,6 +33,7 @@ use Thelia\Core\Event\ActionEvent;
  */
 class ViewEvent extends ActionEvent
 {
+    public const CREATE = 'view.create';
 
     /** @var  string */
     protected $view;
@@ -43,7 +46,7 @@ class ViewEvent extends ActionEvent
     /** @var  string */
     protected $subtreeView = '';
 
-    public function __construct($view, $source, $source_id)
+    public function __construct(string $view, string $source, int $source_id)
     {
         $this->view = $view;
         $this->source = $source;

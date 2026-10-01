@@ -1,0 +1,57 @@
+{% set domain = 'view' %}
+{% set source_labels = {
+    category: 'Categories'|trans({}, domain),
+    product: 'Products'|trans({}, domain),
+    folder: 'Folders'|trans({}, domain),
+    content: 'Contents'|trans({}, domain)
+} %}
+
+{% for source, source_label in source_labels %}
+    {% set source_rows = rows|filter(row => row.assignment.source == source) %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title h5 mb-0">{{ source_label }}</h2>
+        </div>
+        <div class="card-body p-0">
+            {% if source_rows is empty %}
+                <p class="text-muted p-3 mb-0">{{ 'No specific view found.'|trans({}, domain) }}</p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Object'|trans({}, domain) }}</th>
+                                <th>{{ 'Direct view'|trans({}, domain) }}</th>
+                                {% if source in ['category', 'folder'] %}
+                                    <th>{{ 'Subtree view'|trans({}, domain) }}</th>
+                                    <th>{{ 'Children view'|trans({}, domain) }}</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in source_rows %}
+                                {% set assignment = row.assignment %}
+                                {% set edit_url = source == 'category'
+                                    ? path('admin.categories.update', {category_id: assignment.sourceId, current_tab: 'modules'})
+                                    : source == 'product'
+                                        ? path('admin.products.update', {product_id: assignment.sourceId, current_tab: 'modules'})
+                                        : source == 'folder'
+                                            ? path('admin.folders.update', {folder_id: assignment.sourceId, current_tab: 'modules'})
+                                            : path('admin.content.update', {content_id: assignment.sourceId, current_tab: 'modules'})
+                                %}
+                                <tr>
+                                    <td><a href="{{ edit_url }}">#{{ assignment.sourceId }} — {{ row.title }}</a></td>
+                                    <td>{{ assignment.view ?: 'Default view'|trans({}, domain) }}</td>
+                                    {% if source in ['category', 'folder'] %}
+                                        <td>{{ assignment.subtreeView ?: 'Default view'|trans({}, domain) }}</td>
+                                        <td>{{ assignment.childrenView ?: 'Default view'|trans({}, domain) }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}

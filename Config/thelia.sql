@@ -7,9 +7,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- view
 -- ---------------------------------------------------------------------
 
-DROP TABLE IF EXISTS `view`;
-
-CREATE TABLE `view`
+CREATE TABLE IF NOT EXISTS `view`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `view` VARCHAR(255),

@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://thelia.net/schema/dic/module"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_1.xsd">
+        xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>View\View</fullnamespace>
     <descriptive locale="en_US">
         <title>Assign a specific view for any category, product, folder or content</title>
+        <description>Choose the Twig front-office view used by each catalog or content object.</description>
     </descriptive>
     <descriptive locale="fr_FR">
         <title>Utilisez une vue spécifique pour chaque catégorie, produit, dossier ou contenu</title>
+        <description>Choisissez la vue Twig front-office utilisée par chaque objet du catalogue ou du contenu.</description>
     </descriptive>
     <languages>
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>2.1.0</version>
-    <author>
-        <name>Anthony Chevrier / Franck Allimant</name>
-        <email>anthony@meedle.fr / thelia@cqfdev.fr</email>
-    </author>
+    <version>3.0.0</version>
+    <authors>
+        <author>
+            <name>Anthony Chevrier / Franck Allimant</name>
+            <email>anthony@meedle.fr</email>
+            <website>https://github.com/AnthonyMeedle/View</website>
+        </author>
+    </authors>
     <type>classic</type>
-    <thelia>2.1.0</thelia>
-    <stability>other</stability>
+    <thelia>3.0.0</thelia>
+    <stability>prod</stability>
 </module>

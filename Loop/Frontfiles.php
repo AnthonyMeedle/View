@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -23,16 +25,13 @@
 
 namespace View\Loop;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Core\Template\TheliaTemplateHelper;
-use Thelia\Type;
+use View\Service\FrontViewFinder;
 
 /**
  * Class Commentaire
@@ -41,58 +40,35 @@ use Thelia\Type;
  */
 class Frontfiles extends BaseLoop implements ArraySearchLoopInterface
 {
+    public function __construct(private readonly FrontViewFinder $frontViewFinder)
+    {
+    }
+
     /**
      * @return ArgumentCollection
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createAnyTypeArgument('templates-active')
         );
     }
 
-    public function buildArray()
+    public function buildArray(): array
     {
-        try {
-            /** @var TheliaTemplateHelper $templateHelper */
-            $templateHelper = $this->container->get('thelia.template_helper');
-        } catch (\Exception $ex) {
-            $templateHelper = TemplateHelper::getInstance();
-        }
-
-        $frontTemplatePath = $templateHelper->getActiveFrontTemplate()->getAbsolutePath();
-
-        $list = [];
-
-        $finder = Finder::create()
-            ->files()
-            ->in($frontTemplatePath)
-            // Do not enter in bower and node directories
-            ->exclude(['bower_components', 'node_modules'])
-            // Ignore VCS related directories
-            ->ignoreVCS(true)
-            ->ignoreDotFiles(true)
-            ->sortByName()
-            ->name("*.html");
-
-        foreach ($finder as $file) {
-            $list[] = $file;
-        }
-
-        return $list;
+        return $this->frontViewFinder->find();
     }
 
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
-        /** @var SplFileInfo $template */
         foreach ($loopResult->getResultDataCollection() as $template) {
             $loopResultRow = new LoopResultRow($template);
 
             $loopResultRow
-                ->set("NAME", str_replace('.html', '', $template->getFilename()))
-                ->set("FILE", $template->getFilename())
-                ->set("RELATIVE_PATH", $template->getRelativePath())
-                ->set("ABSOLUTE_PATH", $template->getPath())
+                ->set('NAME', $template['name'])
+                ->set('FILE', $template['file'])
+                ->set('RELATIVE_PATH', $template['relative_path'])
+                ->set('ABSOLUTE_PATH', $template['absolute_path'])
             ;
 
             $loopResult->addRow($loopResultRow);

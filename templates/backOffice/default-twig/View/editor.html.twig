@@ -1,0 +1,97 @@
+{% set domain = 'view' %}
+{% set form = getForm('view_form') %}
+{% set selected_view = assignment ? assignment.view : '' %}
+{% set selected_subtree_view = assignment ? assignment.subtreeView : '' %}
+{% set selected_children_view = assignment ? assignment.childrenView : '' %}
+{% set has_subtree = source_configuration.subtree_label is defined %}
+
+{% set edit_url = source_type == 'category'
+    ? path('admin.categories.update', {category_id: source_id, current_tab: 'modules'})
+    : source_type == 'product'
+        ? path('admin.products.update', {product_id: source_id, current_tab: 'modules'})
+        : source_type == 'folder'
+            ? path('admin.folders.update', {folder_id: source_id, current_tab: 'modules'})
+            : path('admin.content.update', {content_id: source_id, current_tab: 'modules'})
+%}
+
+<form action="{{ path('view.add', {source_id: source_id}) }}" method="post">
+    {{ form_widget(form._token) }}
+    <input type="hidden" name="{{ field_name(form.success_url) }}" value="{{ edit_url }}">
+    <input type="hidden" name="{{ field_name(form.error_url) }}" value="{{ edit_url }}">
+    <input type="hidden" name="{{ field_name(form.source) }}" value="{{ source_type }}">
+    <input type="hidden" name="{{ field_name(form.source_id) }}" value="{{ source_id }}">
+    <input type="hidden" name="{{ field_name(form.has_subtree) }}" value="{{ has_subtree ? 1 : 0 }}">
+
+    <p class="text-muted">
+        {% if resolved_view %}
+            {{ 'The view currently used by %object% is %view%.'|trans({
+                '%object%': source_configuration.label|trans({}, domain),
+                '%view%': resolved_view
+            }, domain) }}
+            {% if resolved_source_title %}
+                {{ 'It is inherited from %source%.'|trans({'%source%': resolved_source_title}, domain) }}
+            {% endif %}
+        {% else %}
+            {{ 'The default theme view is currently used by %object%.'|trans({
+                '%object%': source_configuration.label|trans({}, domain)
+            }, domain) }}
+        {% endif %}
+    </p>
+
+    <div class="mb-3">
+        <label for="view-direct-{{ source_type }}-{{ source_id }}" class="form-label">
+            {{ 'View used for %object%'|trans({'%object%': source_configuration.label|trans({}, domain)}, domain) }}
+        </label>
+        <select id="view-direct-{{ source_type }}-{{ source_id }}" name="{{ field_name(form.view) }}" class="form-select">
+            <option value="">{{ 'Use the default view'|trans({}, domain) }}</option>
+            {% for front_view in front_views %}
+                <option value="{{ front_view.name }}" {% if front_view.name == selected_view %}selected{% endif %}>
+                    {{ front_view.file }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if has_subtree %}
+        <div class="row g-3">
+            <div class="col-lg-6">
+                <label for="view-subtree-{{ source_type }}-{{ source_id }}" class="form-label">
+                    {{ 'View inherited by %objects%'|trans({'%objects%': source_configuration.subtree_label|trans({}, domain)}, domain) }}
+                </label>
+                <select id="view-subtree-{{ source_type }}-{{ source_id }}" name="{{ field_name(form.subtree_view) }}" class="form-select">
+                    <option value="">{{ 'Use the default view'|trans({}, domain) }}</option>
+                    {% for front_view in front_views %}
+                        <option value="{{ front_view.name }}" {% if front_view.name == selected_subtree_view %}selected{% endif %}>
+                            {{ front_view.file }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-6">
+                <label for="view-children-{{ source_type }}-{{ source_id }}" class="form-label">
+                    {{ 'View inherited by %objects%'|trans({'%objects%': source_configuration.children_label|trans({}, domain)}, domain) }}
+                </label>
+                <select id="view-children-{{ source_type }}-{{ source_id }}" name="{{ field_name(form.children_view) }}" class="form-select">
+                    <option value="">{{ 'Use the default view'|trans({}, domain) }}</option>
+                    {% for front_view in front_views %}
+                        <option value="{{ front_view.name }}" {% if front_view.name == selected_children_view %}selected{% endif %}>
+                            {{ front_view.file }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% else %}
+        <input type="hidden" name="{{ field_name(form.subtree_view) }}" value="">
+        <input type="hidden" name="{{ field_name(form.children_view) }}" value="">
+    {% endif %}
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <a href="{{ path('admin.module.configure', {module_code: 'View'}) }}" class="btn btn-outline-secondary">
+            <i class="bi bi-eye" aria-hidden="true"></i> {{ 'List all specific views'|trans({}, domain) }}
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check2" aria-hidden="true"></i> {{ 'Save'|trans({}, domain) }}
+        </button>
+    </div>
+</form>

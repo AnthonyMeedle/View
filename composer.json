@@ -1,9 +1,16 @@
 {
   "name": "thelia/view-module",
-  "license": "LGPL-3.0+",
+  "description": "Assign a specific front-office view to a category, product, folder or content in Thelia 3.",
+  "license": "LGPL-3.0-or-later",
   "type": "thelia-module",
   "require": {
-    "thelia/installer": "~1.1"
+    "php": ">=8.3",
+    "thelia/installer": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "View\\": ""
+    }
   },
   "extra": {
     "installer-name": "View"

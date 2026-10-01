@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*************************************************************************************/
 /*                                                                                   */
 /*      Thelia	                                                                     */
@@ -33,6 +35,7 @@ use View\Model\View;
  */
 class FindViewEvent extends ActionEvent
 {
+    public const FIND = 'view.find';
     /** @var  int */
     protected $objectId;
     /** @var  string */
@@ -42,7 +45,7 @@ class FindViewEvent extends ActionEvent
     /** @var  View */
     protected $viewObject;
 
-    public function __construct($objectId, $objectType)
+    public function __construct(int $objectId, string $objectType)
     {
         $this->objectId = $objectId;
         $this->objectType = $objectType;
